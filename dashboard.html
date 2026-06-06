@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Device Monitor - Dashboard Pribadi</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --card: #11161d;
+    --card-2: #161b22;
+    --border: #21262d;
+    --muted: #7d8590;
+    --text: #e6edf3;
+    --accent: #4fc3f7;
+    --accent-2: #66bb6a;
+    --danger: #ef5350;
+    --warn: #ffa726;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-size: 1.1em;
+    color: var(--accent);
+    letter-spacing: .3px;
+  }
+  header .status {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 0.85em;
+    color: var(--muted);
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--muted);
+    box-shadow: 0 0 6px rgba(255,255,255,.1);
+  }
+  .dot.on { background: var(--accent-2); box-shadow: 0 0 10px var(--accent-2); }
+  .dot.off { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 780px){
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .card header {
+    background: none; border: none; padding: 0; margin: 0;
+  }
+  .card h2 {
+    font-size: 1em;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+  .device {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .device .meta strong { display: block; color: var(--text); }
+  .device .meta span { color: var(--muted); font-size: 0.82em; }
+  .device .time { color: var(--muted); font-size: 0.8em; }
+
+  .log {
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    max-height: 340px;
+    overflow-y: auto;
+    font-family: "Courier New", monospace;
+    font-size: 0.85em;
+  }
+  .log .entry {
+    padding: 8px 10px;
+    border-left: 3px solid var(--muted);
+    margin: 6px 0;
+    background: var(--card);
+    border-radius: 6px;
+  }
+  .log .entry.started { border-left-color: var(--accent); }
+  .log .entry.in { border-left-color: var(--accent-2); }
+  .log .entry.out { border-left-color: var(--warn); }
+  .log .time { color: var(--muted); }
+  .log .from { color: var(--accent); font-weight: 600; }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  button {
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: #000; font-weight: 700; border-color: var(--accent); }
+  button.primary:hover { background: #81d4fa; }
+
+  .empty {
+    color: var(--muted);
+    text-align: center;
+    padding: 24px;
+    font-size: 0.9em;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛡️ Device Monitor</h1>
+      <div class="status">
+        <span class="dot on" id="dot"></span>
+        <span id="statusLabel">Sedang memantau</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <header>
+          <h2>📱 Perangkat</h2>
+        </header>
+        <div id="deviceList">
+          <div class="device">
+            <div class="meta"><strong>Smartphone (Andro)</strong><span>Pixel-style</span></div>
+            <div class="time">Online <span id="uptime">--</span></div>
+          </div>
+        </div>
+        <div class="actions">
+          <button onclick="markOnline()">Tandai Online</button>
+          <button onclick="markOffline()">Tandai Offline</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <header>
+          <h2>📊 Ringkasan</h2>
+        </header>
+        <div id="stats">
+          <div class="device"><div class="meta"><strong>Pesan masuk</strong><span>Total</span></div><div class="time" id="inCount">0</div></div>
+          <div class="device"><div class="meta"><strong>Pesan keluar</strong><span>Total</span></div><div class="time" id="outCount">0</div></div>
+          <div class="device"><div class="meta"><strong>Terakhir aktif</strong><span>Detik terakhir</span></div><div class="time" id="lastSeen">-</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <header>
+          <h2>📋 Aktivitas Terbaru</h2>
+        </header>
+        <div id="log" class="log"><div class="empty">Belum ada aktivitas</div></div>
+      </div>
+
+      <div class="card">
+        <header>
+          <h2>⚠️ Peringatan</h2>
+        </header>
+        <div id="alerts" class="log"><div class="empty">Tidak ada peringatan</div></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const state = { in: 0, out: 0, online: true };
+  const logEl = document.getElementById('log');
+  const alertEl = document.getElementById('alerts');
+  const inEl = document.getElementById('inCount');
+  const outEl = document.getElementById('outCount');
+  const lastEl = document.getElementById('lastSeen');
+  const dot = document.getElementById('dot');
+  const statusLabel = document.getElementById('statusLabel');
+
+  function addLog(text, type){
+    const div = document.createElement('div');
+    div.className = 'entry ' + type;
+    const now = new Date().toLocaleTimeString('id-ID');
+    div.innerHTML = `<div class="time">${now}</div><div>${text}</div>`;
+    logEl.prepend ? logEl.prepend(div) : (() => { logEl.insertBefore(div, logEl.firstChild); })();
+    if (logEl.children.length > 60) logEl.lastChild.remove();
+  }
+  function addAlert(text){
+    const div = document.createElement('div');
+    div.className = 'entry';
+    const now = new Date().toLocaleTimeString('id-ID');
+    div.innerHTML = `<div class="time">${now}</div><div>${text}</div>`;
+    alertEl.prepend ? alertEl.prepend(div) : (() => { alertEl.insertBefore(div, alertEl.firstChild); })();
+    if (alertEl.children.length > 40) alertEl.lastChild.remove();
+  }
+  function tick(){
+    lastEl.textContent = new Date().toLocaleTimeString('id-ID');
+  }
+  function setOnline(v){
+    state.online = v;
+    dot.className = v ? 'dot on' : 'dot off';
+    statusLabel.textContent = v ? 'Sedang memantau' : 'Offline';
+  }
+  window.markOnline = () => { setOnline(true); addAlert('Perangkat kembali ONLINE'); addLog('Status: ONLINE','started'); };
+  window.markOffline = () => { setOnline(false); addAlert('Perangkat OFFLINE'); addLog('Status: OFFLINE','started'); };
+  window.simulateIncoming = () => {
+    state.in++; inEl.textContent = state.in;
+    const senders = ['Budi', 'Siti', '+62812xxx', 'Grup Kerja', 'Grup Keluarga', 'CS Tokopedia'];
+    const msgs = ['Halo, check ini', 'Jangan lupa besok', 'Kirim fotonya ya', 'Oke 👍', 'Ada lokasi baru?', 'Minta kirim ulang'];
+    const s = senders[Math.floor(Math.random()*senders.length)];
+    const m = msgs[Math.floor(Math.random()*msgs.length)];
+    addLog(`📥 Masuk dari <span class="from">${s}</span><br>💬 ${m}`, 'in');
+    tick();
+  };
+  window.simulateOutgoing = () => {
+    state.out++; outEl.textContent = state.out;
+    const to = ['Budi', 'Siti', '+62812xxx', 'Grup Kerja'];
+    const m = ['Oke, nanti kabari', 'Siap', 'Diperiksa dulu', 'Sending screenshot...'];
+    const s = to[Math.floor(Math.random()*to.length)];
+    const txt = m[Math.floor(Math.random()*m.length)];
+    addLog(`📤 Keluar ke <span class="from">${s}</span><br>💬 ${txt}`, 'out');
+    tick();
+  };
+  addLog('Monitoring dimulai. Siap menangkap aktivitas.', 'started');
+  tick();
+})();
+</script>
+
+<div style="margin-top: 4px; display: flex; gap: 8px; flex-wrap: wrap;">
+  <button class="primary" onclick="simulateIncoming()">Simulasi Pesan Masuk</button>
+  <button class="primary" onclick="simulateOutgoing()">Simulasi Pesan Keluar</button>
+</div>
+
+</body>
+</html>
