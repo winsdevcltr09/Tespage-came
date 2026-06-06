@@ -8,7 +8,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #1a1a2e;
       color: #eee;
       padding: 20px;
@@ -24,19 +24,20 @@
       color: #4fc3f7;
       text-align: center;
       margin-bottom: 10px;
+      word-break: break-word;
     }
     
     .subtitle {
       text-align: center;
       color: #aaa;
       font-size: 0.9em;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
     
     .video-container {
       background: #16213e;
       border-radius: 12px;
-      padding: 15px;
+      padding: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     
@@ -44,7 +45,7 @@
       width: 100%;
       border-radius: 8px;
       background: #000;
-      transform: scaleX(-1); /* Mirror effect */
+      transform: scaleX(-1);
     }
     
     canvas {
@@ -62,11 +63,11 @@
       background: #4fc3f7;
       color: #1a1a2e;
       border: none;
-      padding: 14px;
+      padding: 12px;
       border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 15px;
       transition: all 0.2s;
     }
     
@@ -93,15 +94,15 @@
     .info-panel {
       background: #16213e;
       border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
+      padding: 18px;
+      margin-top: 18px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     
     h2 {
       color: #4fc3f7;
-      font-size: 1.2em;
-      margin-bottom: 15px;
+      font-size: 1.15em;
+      margin-bottom: 14px;
       border-bottom: 2px solid #4fc3f7;
       padding-bottom: 8px;
     }
@@ -121,7 +122,7 @@
     
     .info-label {
       color: #888;
-      font-size: 0.85em;
+      font-size: 0.82em;
       margin-bottom: 4px;
       text-transform: uppercase;
     }
@@ -136,7 +137,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       gap: 10px;
-      margin-top: 15px;
+      margin-top: 10px;
     }
     
     .capture-item {
@@ -161,12 +162,12 @@
     .log {
       background: #16213e;
       border-radius: 12px;
-      padding: 15px;
-      margin-top: 20px;
-      max-height: 200px;
+      padding: 14px;
+      margin-top: 18px;
+      max-height: 220px;
       overflow-y: auto;
-      font-family: 'Courier New', monospace;
-      font-size: 0.85em;
+      font-family: "Courier New", monospace;
+      font-size: 0.83em;
     }
     
     .log-entry {
@@ -183,15 +184,32 @@
     .permission-denied {
       background: #ef5350;
       color: white;
-      padding: 20px;
+      padding: 18px;
       border-radius: 8px;
       text-align: center;
-      margin: 20px 0;
+      margin: 16px 0;
+    }
+    
+    .telegram-settings {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .telegram-settings input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #0f3460;
+      color: #eee;
     }
     
     @media (max-width: 600px) {
       .controls { grid-template-columns: 1fr; }
       .info-grid { grid-template-columns: 1fr; }
+      .telegram-settings { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -200,13 +218,11 @@
     <h1>📸 Camera Tester</h1>
     <p class="subtitle">Testing kamera perangkat ini</p>
     
-    <!-- Permission error message -->
     <div id="permissionError" style="display:none;" class="permission-denied">
       <strong>❌ Izin kamera ditolak</strong><br>
       Silakan berikan izin akses kamera di pengaturan browser, lalu refresh halaman.
     </div>
     
-    <!-- Video Preview -->
     <div class="video-container">
       <video id="video" autoplay playsinline muted></video>
       <canvas id="canvas"></canvas>
@@ -219,7 +235,6 @@
       </div>
     </div>
     
-    <!-- Camera Info -->
     <div class="info-panel">
       <h2>📊 Info Kamera</h2>
       <div class="info-grid">
@@ -250,7 +265,11 @@
       </div>
     </div>
     
-    <!-- Captured Photos -->
+    <div class="info-panel">
+      <h2>📋 Activity Log</h2>
+      <div id="log" class="log"></div>
+    </div>
+    
     <div class="info-panel">
       <h2>🖼️ Hasil Capture</h2>
       <div id="gallery" class="capture-gallery">
@@ -258,10 +277,15 @@
       </div>
     </div>
     
-    <!-- Activity Log -->
     <div class="info-panel">
-      <h2>📋 Activity Log</h2>
-      <div id="log" class="log"></div>
+      <h2>✈️ Kirim ke Telegram</h2>
+      <p style="color:#aaa; margin-bottom:8px;">Isi bot token dan chat ID, lalu klik <b>Kirim Foto Terbaru</b>.</p>
+      <div class="telegram-settings">
+        <input type="text" id="tgBotToken" placeholder="Bot token (misal 123:ABC...)" />
+        <input type="text" id="tgChatId" placeholder="Chat ID (misal 123456789)" />
+      </div>
+      <button id="tgSendBtn" onclick="sendLastCaptureToTelegram()" style="margin-top:10px;">Kirim Foto Terbaru ke Telegram</button>
+      <div id="tgStatus" style="margin-top:8px; color:#aaa;"></div>
     </div>
   </div>
   
@@ -270,6 +294,7 @@
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext('2d');
     let currentStream = null;
+    let captures = [];
     let isFrontCamera = true;
     
     const log = document.getElementById('log');
@@ -277,6 +302,11 @@
     const stopBtn = document.getElementById('stopBtn');
     const captureBtn = document.getElementById('captureBtn');
     const switchBtn = document.getElementById('switchBtn');
+    
+    const tgBotToken = document.getElementById('tgBotToken');
+    const tgChatId = document.getElementById('tgChatId');
+    const tgSendBtn = document.getElementById('tgSendBtn');
+    const tgStatus = document.getElementById('tgStatus');
     
     function addLog(message, type = 'info') {
       let entry = document.createElement('div');
@@ -290,7 +320,7 @@
       try {
         addLog('Meminta akses kamera...', 'info');
         
-        let constraints = {
+        const constraints = {
           video: {
             facingMode: isFrontCamera ? 'user' : 'environment',
             width: { ideal: 1920 },
@@ -298,7 +328,7 @@
           }
         };
         
-        let stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
         currentStream = stream;
         video.srcObject = stream;
         
@@ -319,7 +349,7 @@
         console.error('Error:', err);
         addLog('Error: ' + err.message, 'error');
         
-        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        if (['NotAllowedError','PermissionDeniedError'].includes(err.name)) {
           document.getElementById('permissionError').style.display = 'block';
           addLog('Izin kamera ditolak. Berikan izin di browser settings.', 'error');
         } else if (err.name === 'NotFoundError') {
@@ -349,32 +379,25 @@
     }
     
     async function switchCamera() {
-      if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
-      }
+      if (currentStream) currentStream.getTracks().forEach(track => track.stop());
       isFrontCamera = !isFrontCamera;
       addLog('Beralih ke kamera ' + (isFrontCamera ? 'depan' : 'belakang') + '...', 'info');
       await startCamera();
     }
     
     function updateInfo(stream) {
-      let track = stream.getVideoTracks()[0];
-      let capabilities = track.getCapabilities ? track.getCapabilities() : {};
-      let settings = track.getSettings();
+      const track = stream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+      const settings = track.getSettings();
       
       document.getElementById('deviceName').textContent = track.label || 'Unknown';
-      document.getElementById('resolution').textContent = 
-        settings.width + ' x ' + settings.height;
-      document.getElementById('frameRate').textContent = 
-        settings.frameRate ? settings.frameRate.toFixed(1) + ' fps' : '-';
-      document.getElementById('aspectRatio').textContent = 
-        settings.width && settings.height ? calculateAspectRatio(settings.width, settings.height) : '-';
+      document.getElementById('resolution').textContent = (settings.width||'-') + ' x ' + (settings.height||'-');
+      document.getElementById('frameRate').textContent = settings.frameRate ? settings.frameRate.toFixed(1) + ' fps' : '-';
+      document.getElementById('aspectRatio').textContent = settings.width && settings.height ? calculateAspectRatio(settings.width, settings.height) : '-';
       document.getElementById('facingMode').textContent = 
-        settings.facingMode === 'user' ? 'Depan (Front)' : 
-        settings.facingMode === 'environment' ? 'Belakang (Rear)' : 
-        settings.facingMode || '-';
+        settings.facingMode === 'user' ? 'Depan (Front)' :
+        settings.facingMode === 'environment' ? 'Belakang (Rear)' : (settings.facingMode || '-');
       
-      // Update canvas size
       canvas.width = settings.width || 640;
       canvas.height = settings.height || 480;
       
@@ -383,8 +406,8 @@
     }
     
     function calculateAspectRatio(width, height) {
-      let gcd = (a, b) => b ? gcd(b, a % b) : a;
-      let divisor = gcd(width, height);
+      const gcd = (a, b) => b ? gcd(b, a % b) : a;
+      const divisor = gcd(width, height);
       return (width / divisor) + ':' + (height / divisor);
     }
     
@@ -392,23 +415,21 @@
       if (!currentStream) return;
       
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      let dataURL = canvas.toDataURL('image/png');
+      const dataURL = canvas.toDataURL('image/png');
+      const timestamp = new Date().toLocaleTimeString();
       
-      let gallery = document.getElementById('gallery');
+      captures.unshift({ dataURL, timestamp });
       
-      // Remove placeholder if exists
-      if (gallery.querySelector('p')) {
-        gallery.innerHTML = '';
-      }
+      const gallery = document.getElementById('gallery');
+      if (gallery.querySelector('p')) gallery.innerHTML = '';
       
-      let item = document.createElement('div');
+      const item = document.createElement('div');
       item.className = 'capture-item';
-      
-      let timestamp = new Date().toLocaleTimeString();
       item.innerHTML = `
         <img src="${dataURL}" alt="Capture ${timestamp}">
-        <div style="color:#888;font-size:0.75em;text-align:center;margin-bottom:5px;">${timestamp}</div>
-        <button onclick="downloadPhoto('${dataURL}', '${timestamp}')">💾 Download</button>
+        <div style="color:#888;font-size:0.72em;text-align:center;margin-bottom:5px;">${timestamp}</div>
+        <button onclick="sendToTelegram(this, '${timestamp.replace(/'/g, "\\'")}')">✈️ Kirim TG</button>
+        <button onclick="downloadPhoto('${timestamp.replace(/'/g, "\\'")}')" style="margin-top:4px;">💾 Download</button>
         <button onclick="this.parentElement.remove()" style="background:#ef5350;margin-top:4px;">🗑 Delete</button>
       `;
       
@@ -416,15 +437,87 @@
       addLog('Foto berhasil diambil', 'success');
     }
     
-    function downloadPhoto(dataURL, timestamp) {
-      let link = document.createElement('a');
+    function downloadPhoto(timestamp) {
+      const capture = captures.find(c => c.timestamp === timestamp);
+      if (!capture) return;
+      
+      const link = document.createElement('a');
       link.download = 'camera-test-' + timestamp.replace(/:/g, '-') + '.png';
-      link.href = dataURL;
+      link.href = capture.dataURL;
       link.click();
       addLog('Foto di-download', 'info');
     }
     
-    // Check camera support
+    async function sendToTelegram(buttonEl, timestamp) {
+      const capture = captures.find(c => c.timestamp === timestamp);
+      if (!capture) {
+        addLog('Foto tidak ditemukan untuk dikirim', 'error');
+        return;
+      }
+      
+      const token = tgBotToken.value.trim();
+      const chatId = tgChatId.value.trim();
+      
+      if (!token || !chatId) {
+        addLog('Isi Bot Token dan Chat ID terlebih dahulu', 'error');
+        alert('Mohon isi Bot Token dan Chat ID terlebih dahulu');
+        return;
+      }
+      
+      try {
+        if (buttonEl) buttonEl.disabled = true;
+        tgStatus.textContent = 'Mengirim...';
+        
+        const blob = await (await fetch(capture.dataURL)).blob();
+        const form = new FormData();
+        form.append('chat_id', chatId);
+        form.append('photo', blob, 'camera-test.png');
+        
+        const res = await fetch('https://api.telegram.org/bot' + token + '/sendPhoto', {
+          method: 'POST',
+          body: form
+        });
+        
+        const data = await res.json();
+        
+        if (data.ok) {
+          addLog('Foto berhasil dikirim ke Telegram', 'success');
+          tgStatus.textContent = 'Terkirim ✅';
+          setTimeout(() => { tgStatus.textContent = ''; }, 1500);
+        } else {
+          throw new Error(data.description || JSON.stringify(data));
+        }
+      } catch (err) {
+        console.error(err);
+        addLog('Gagal kirim Telegram: ' + err.message, 'error');
+        tgStatus.textContent = 'Gagal ❌';
+      } finally {
+        if (buttonEl) buttonEl.disabled = false;
+      }
+    }
+    
+    async function sendLastCaptureToTelegram() {
+      const token = tgBotToken.value.trim();
+      const chatId = tgChatId.value.trim();
+      
+      if (!token || !chatId) {
+        addLog('Isi Bot Token dan Chat ID terlebih dahulu', 'error');
+        alert('Mohon isi Bot Token dan Chat ID terlebih dahulu');
+        return;
+      }
+      
+      if (!captures.length) {
+        addLog('Belum ada foto capture untuk dikirim', 'error');
+        alert('Ambil capture dulu sebelum mengirim.');
+        return;
+      }
+      
+      tgSendBtn.disabled = true;
+      await sendToTelegram(null, captures[0].timestamp);
+      tgSendBtn.disabled = false;
+      setTimeout(() => { tgStatus.textContent = ''; }, 1500);
+    }
+    
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       addLog('Browser tidak mendukung akses kamera', 'error');
       startBtn.disabled = true;
@@ -434,11 +527,8 @@
       addLog('Klik "Mulai Kamera" untuk mulai testing', 'info');
     }
     
-    // Page unload cleanup
     window.addEventListener('beforeunload', function() {
-      if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
-      }
+      if (currentStream) currentStream.getTracks().forEach(track => track.stop());
     });
     
     addLog('Halaman kamera test siap', 'info');
